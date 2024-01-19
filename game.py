@@ -34,7 +34,7 @@ pygame.display.set_caption("Cute Platformer")
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
     
-def draw(window, background, bg_image, player, objects, offset_x, menu_items):
+def draw(window, background, bg_image, player, objects, offset_x, menu_items, heart):
     for tile in background:
         window.blit(bg_image, tile)
 
@@ -43,6 +43,13 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items):
 
     player.draw(window, offset_x)
     menu_items.draw(window)
+    i = 0
+    x_heart = 0
+    while i < player.health : 
+        window.blit(heart, (x_heart, 0))
+        x_heart += 25
+        i+=1
+    
 
     pygame.display.update()
 
@@ -51,8 +58,11 @@ def main(window):
     background, bg_image = get_background("Blue.png")
     block_size = 96
     back_button_img = pygame.image.load("assets/Menu/Buttons/Back.png") 
-    back_button = menu_button.GameButton(0,0, back_button_img, 2)
-   
+    back_button = menu_button.GameButton(970,0, back_button_img, 2)
+    heart_img = pygame.image.load('assets/Other/Heart.png')
+    heart_img = pygame.transform.scale(heart_img, (25, 25))
+    
+    
     
     player = Player(0, 100, 50, 50)
     fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
@@ -91,8 +101,10 @@ def main(window):
         player.loop(FPS)
         fire.loop()
         handle_move(player, objects)
-        draw(window, background, bg_image, player, objects, offset_x, back_button)
-        if player.rect.y > 700 :
+        draw(window, background, bg_image, player, objects, offset_x, back_button, heart_img)
+        
+     
+        if player.rect.y > 800 :
             game_over(window)
         if player.health == 0:
             game_over(window)
@@ -165,7 +177,6 @@ def menu(window):
         for event in pygame.event.get():
            if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.checkForInput(menu_mouse_pos):
-                    print('PLAY GAME')
                     main(window)
                 if options_button.checkForInput(menu_mouse_pos):
                     print('OPTIONS')

@@ -67,9 +67,6 @@ class Player(pygame.sprite.Sprite):
             self.hit = False
             self.hit_count = 0
             
-        
-            
-
         self.fall_count += 1
         self.update_sprite()
 
