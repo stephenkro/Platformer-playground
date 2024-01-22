@@ -72,7 +72,7 @@ def main(window):
     # objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
     #            Block(block_size * 3, HEIGHT - block_size * 4, block_size),  
     #            Block(block_size * 4, HEIGHT - block_size * 4, block_size), fire]
-    platforms = [Block(block_size * i+100, HEIGHT - block_size * 4, block_size) for i in range(10)]
+    platforms = [Block(block_size * i+200, HEIGHT - block_size * 4, block_size) for i in range(6)]
     objects = [*floor, *platforms,  Block(0, HEIGHT - block_size * 2, block_size), fire]
    
 
