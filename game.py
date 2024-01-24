@@ -10,6 +10,7 @@ import Game.Classes.object
 import Game.Functions.load
 import Game.Functions.physics
 from Menu.menu_button import TextButton
+import Game.Classes.enemy
 
 pygame.init()
 
@@ -19,6 +20,7 @@ WIDTH, HEIGHT = 1000, 800
 FPS = 60
 PLAYER_VEL = 5
 Player = Game.Classes.player.Player
+Slime = Game.Classes.enemy.Slime
 Fire = Game.Classes.object.Fire
 Block = Game.Classes.object.Block
 get_background = Game.Functions.load.get_background
@@ -65,15 +67,19 @@ def main(window):
     
     
     player = Player(0, 100, 50, 50)
-    fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
+    slime = Slime(150, 640, 44, 30)
+    fire = Fire(150, HEIGHT - block_size - 64, 16, 32)
+    fire_second = Fire(-150, HEIGHT - block_size - 64, 16, 32)
     fire.on()
+    fire_second.on()
     floor = [Block(i * block_size, HEIGHT - block_size, block_size)
-             for i in range(-WIDTH * 2 // block_size, (WIDTH * 2) // block_size)]
+             for i in range(-WIDTH * 3 // block_size, (WIDTH * 3) // block_size)]
     # objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
     #            Block(block_size * 3, HEIGHT - block_size * 4, block_size),  
     #            Block(block_size * 4, HEIGHT - block_size * 4, block_size), fire]
     platforms = [Block(block_size * i+200, HEIGHT - block_size * 4, block_size) for i in range(6)]
-    objects = [*floor, *platforms,  Block(0, HEIGHT - block_size * 2, block_size), fire]
+    platform_second = [Block(block_size * i+800, HEIGHT - block_size * 6, block_size) for i in range(6)]
+    objects = [*floor, *platforms, *platform_second, Block(0, HEIGHT - block_size * 2, block_size),Block(-95, HEIGHT - block_size * 2, block_size), fire, fire_second, slime]
    
 
     offset_x = 0
@@ -99,8 +105,11 @@ def main(window):
                     menu(window)
 
         player.loop(FPS)
+        slime.loop()
         fire.loop()
-        handle_move(player, objects)
+        fire_second.loop()
+        handle_move(player, objects, True)
+        handle_move(slime, objects, False)
         draw(window, background, bg_image, player, objects, offset_x, back_button, heart_img)
         
      
@@ -187,6 +196,4 @@ def menu(window):
         pygame.display.update()
         
 
-# if __name__ == "__main__":
-#     main(window)
 menu(window)
