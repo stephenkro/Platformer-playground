@@ -59,3 +59,28 @@ def handle_move(player, objects, is_main):
                 player.make_hit()
             if obj and obj.name == "slime":
                 player.make_hit()
+
+
+def enemy_collide(enemy, objects):
+    enemy.movement(enemy.direction)
+    enemy.update()
+    collided_object = None
+    for obj in objects:
+        if pygame.sprite.collide_mask(enemy, obj):
+            collided_object = obj
+            break
+
+    enemy.movement(enemy.direction)
+    enemy.update()
+    return collided_object
+
+def enemy_move(enemy, objects):
+    check_collide = enemy_collide(enemy, objects)
+    if check_collide:
+        if enemy.direction == 'left':
+            enemy.movement("right")
+            enemy.pace_count = 0
+        if enemy.direction == 'right':
+            enemy.movement("left")
+            enemy.pace_count = 0
+

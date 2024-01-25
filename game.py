@@ -67,7 +67,8 @@ def main(window):
     
     
     player = Player(0, 100, 50, 50)
-    slime = Slime(150, 640, 44, 30)
+    slime = Slime(150, 645, 44, 30)
+    slime2 = Slime(300, 645, 44, 30)
     fire = Fire(150, HEIGHT - block_size - 64, 16, 32)
     fire_second = Fire(-150, HEIGHT - block_size - 64, 16, 32)
     fire.on()
@@ -77,9 +78,10 @@ def main(window):
     # objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
     #            Block(block_size * 3, HEIGHT - block_size * 4, block_size),  
     #            Block(block_size * 4, HEIGHT - block_size * 4, block_size), fire]
-    platforms = [Block(block_size * i+200, HEIGHT - block_size * 4, block_size) for i in range(6)]
-    platform_second = [Block(block_size * i+800, HEIGHT - block_size * 6, block_size) for i in range(6)]
-    objects = [*floor, *platforms, *platform_second, Block(0, HEIGHT - block_size * 2, block_size),Block(-95, HEIGHT - block_size * 2, block_size), fire, fire_second, slime]
+    platforms = [Block(block_size * i+300, HEIGHT - block_size * 4, block_size) for i in range(4)]
+    platform_second = [Block(block_size * i+800, HEIGHT - block_size * 6, block_size) for i in range(4)]
+    objects = [*floor, *platforms, *platform_second, Block(0, HEIGHT - block_size * 2, block_size),Block(-95, HEIGHT - block_size * 2, block_size), fire, fire_second, slime, slime2]
+    enemy_objects = [Block(0, HEIGHT - block_size * 2, block_size), Block(-95, HEIGHT - block_size * 2, block_size)]
    
 
     offset_x = 0
@@ -105,11 +107,11 @@ def main(window):
                     menu(window)
 
         player.loop(FPS)
-        slime.loop()
+        slime.loop(enemy_objects)
+        slime2.loop(enemy_objects)
         fire.loop()
         fire_second.loop()
         handle_move(player, objects, True)
-        handle_move(slime, objects, False)
         draw(window, background, bg_image, player, objects, offset_x, back_button, heart_img)
         
      
