@@ -12,7 +12,7 @@ class Enemy(pygame.sprite.Sprite):
     GRAVITY = 1
     ANIMATION_DELAY = 5
 
-    def __init__(self, x, y, width, height, name=None , pace=0, turn_after = 20):
+    def __init__(self, x, y, width, height, name=None , pace=0, turn_after = 0):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.image = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -38,7 +38,7 @@ class Enemy(pygame.sprite.Sprite):
 
 class Slime(Enemy):
    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, 'slime', 3, 500)
+        super().__init__(x, y, width, height, 'slime', 3, 350)
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0

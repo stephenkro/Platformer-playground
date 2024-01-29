@@ -27,6 +27,7 @@ get_background = Game.Functions.load.get_background
 handle_move = Game.Functions.physics.handle_move
 menu_background = pygame.image.load("assets/Background/Sky.png")
 menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
+create_platform = Game.Functions.load.create_platform
 
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -73,16 +74,13 @@ def main(window):
     fire_second = Fire(-150, HEIGHT - block_size - 64, 16, 32)
     fire.on()
     fire_second.on()
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size)
-             for i in range(-WIDTH * 3 // block_size, (WIDTH * 3) // block_size)]
-    # objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
-    #            Block(block_size * 3, HEIGHT - block_size * 4, block_size),  
-    #            Block(block_size * 4, HEIGHT - block_size * 4, block_size), fire]
-    platforms = [Block(block_size * i+300, HEIGHT - block_size * 4, block_size) for i in range(4)]
-    platform_second = [Block(block_size * i+800, HEIGHT - block_size * 6, block_size) for i in range(4)]
-    objects = [*floor, *platforms, *platform_second, Block(0, HEIGHT - block_size * 2, block_size),Block(-95, HEIGHT - block_size * 2, block_size), fire, fire_second, slime, slime2]
-    enemy_objects = [Block(0, HEIGHT - block_size * 2, block_size), Block(-95, HEIGHT - block_size * 2, block_size)]
-   
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH * 3 // block_size, (WIDTH * 3) // block_size)]
+    first_layer_platform = [*create_platform(300, 4, 4, block_size, Block), *create_platform(-600, 4, 4, block_size, Block), *create_platform(1200, 4, 2, block_size, Block), *create_platform(2000, 4, 4, block_size, Block)]
+    second_layer_platform = [*create_platform(800, 6, 4, block_size, Block), *create_platform(1600, 6, 4, block_size, Block)]
+    rising_level = [*create_platform(0, 2, 1, block_size, Block), *create_platform(-95, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
+    platforms = [*floor, *first_layer_platform, *second_layer_platform, *rising_level]
+    objects = [*platforms, fire, fire_second, slime, slime2]
+    enemy_objects = [*rising_level]
 
     offset_x = 0
     scroll_area_width = 200
