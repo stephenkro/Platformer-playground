@@ -21,6 +21,7 @@ FPS = 60
 PLAYER_VEL = 5
 Player = Game.Classes.player.Player
 Trophy = Game.Classes.object.Trophy
+Fruit = Game.Classes.object.Fruit
 Slime = Game.Classes.enemy.Slime
 Fire = Game.Classes.object.Fire
 Block = Game.Classes.object.Block
@@ -31,6 +32,7 @@ menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 create_platform = Game.Functions.load.create_platform
 
 
+
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 menu_button = Game.game_button
 pygame.display.set_caption("Cute Platformer")
@@ -38,7 +40,7 @@ pygame.display.set_caption("Cute Platformer")
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
     
-def draw(window, background, bg_image, player, objects, offset_x, menu_items, heart):
+def draw(window, background, bg_image, player, objects, offset_x, menu_items, heart, score_text):
     for tile in background:
         window.blit(bg_image, tile)
 
@@ -47,6 +49,7 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
     player.draw(window, offset_x)
     menu_items.draw(window)
+    window.blit(score_text, (125, 5))
    
     i = 0
     x_heart = 0
@@ -58,7 +61,9 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
     pygame.display.update()
 
+
 def main(window):
+    SCORE=0
     clock = pygame.time.Clock()
     background, bg_image = get_background("Blue.png")
     block_size = 96
@@ -67,7 +72,8 @@ def main(window):
     heart_img = pygame.image.load('assets/Other/Heart.png')
     hearts = pygame.transform.scale(heart_img, (25, 25))
     trophy = Trophy(3100, 450, 120, 120)
-    
+    fruit = Fruit(320, 370, 30, 30, 'Melon')
+    items = [Fruit(320 + i * 100, 370, 30, 30, 'Melon') for i in range(4)]
     
     
     player = Player(0, 100, 50, 50)
@@ -82,7 +88,7 @@ def main(window):
     second_layer_platform = [*create_platform(800, 6, 4, block_size, Block), *create_platform(1600, 6, 4, block_size, Block)]
     rising_level = [*create_platform(0, 2, 1, block_size, Block), *create_platform(-95, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
     platforms = [*floor, *first_layer_platform, *second_layer_platform, *rising_level]
-    objects = [*platforms, fire, fire_second, slime, slime2, trophy]
+    objects = [*platforms, fire, fire_second, slime, slime2, trophy, *items]
     enemy_objects = [*rising_level]
 
     offset_x = 0
@@ -91,9 +97,9 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS)
-
+        score_text = get_font(20).render(f'Score:{SCORE}', True, "#d7fcd4")
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: 
                 run = False
                 break
             
@@ -112,15 +118,19 @@ def main(window):
         slime2.loop(enemy_objects)
         fire.loop()
         fire_second.loop()
-        handle_move(player, objects, True)
-        draw(window, background, bg_image, player, objects, offset_x, back_button, hearts)
+        
+        handle_move(player, objects, SCORE)
+        draw(window, background, bg_image, player, objects, offset_x, back_button, hearts, score_text)
         
      
         if player.rect.y > 800 :
             game_over(window, False)
         if player.health == 0:
             game_over(window, False)
-        if handle_move(player, objects, True) == True:
+        # if handle_move(player, objects, SCORE) == 100:
+        #     print('SCORE SUPPOSE TO INCREASE')
+        #     SCORE += 100
+        if handle_move(player, objects, SCORE) == True:
             game_over(window, True)
         
 
@@ -168,7 +178,7 @@ def game_over(window, win):
            menu_rect = menu_text.get_rect(center=(500, 100))
            menu_mouse_pos = pygame.mouse.get_pos()
 
-           score_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 250), 
+           score_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Options Rect.png"), pos=(500, 250), 
                                 text_input="SCORE", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
            main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
                                 text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")

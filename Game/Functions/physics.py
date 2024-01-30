@@ -37,7 +37,7 @@ def collide(player, objects, dx):
     player.update()
     return collided_object
 
-def handle_move(player, objects, is_main):
+def handle_move(player, objects, score):
     keys = pygame.key.get_pressed()
 
     player.x_vel = 0
@@ -53,15 +53,20 @@ def handle_move(player, objects, is_main):
     to_check = [collide_left, collide_right, *vertical_collide]
 
     
-    if is_main:
-        for obj in to_check:
-            if obj and obj.name == "fire":
-                player.make_hit()
-            if obj and obj.name == "slime":
-                player.make_hit()
-            if obj and obj.name == "trophy":
-                return True
-  
+    for obj in to_check:
+        if obj and obj.name == "fire":
+            player.make_hit()
+        if obj and obj.name == "slime":
+            player.make_hit()
+        if obj and obj.name == "trophy":
+            return True
+        if obj and obj.name == "fruit":
+            print('SCORE INCREASE')
+            # score += 100
+            objects.remove(obj)
+            
+    return score
+    
 
 def enemy_collide(enemy, objects):
     # enemy.movement(enemy.direction)

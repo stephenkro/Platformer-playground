@@ -68,3 +68,14 @@ class Trophy(Object):
         self.image = pygame.image.load('assets/Items/Checkpoints/End/End (Idle).png')
         self.mask = pygame.mask.from_surface(self.image)
 
+
+class Fruit(Object):
+    def __init__(self, x, y, width, height, fruit_type):
+        super().__init__(x, y, width, height, 'fruit')
+        self.fruit = load_sprite_sheets('Items', 'Fruits', width, height)
+        self.image = self.fruit[fruit_type][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+
+     
