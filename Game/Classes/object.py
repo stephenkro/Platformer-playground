@@ -59,3 +59,12 @@ class Fire(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
+
+
+
+class Trophy(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, 'trophy')
+        self.image = pygame.image.load('assets/Items/Checkpoints/End/End (Idle).png')
+        self.mask = pygame.mask.from_surface(self.image)
+

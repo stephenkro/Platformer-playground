@@ -20,6 +20,7 @@ WIDTH, HEIGHT = 1000, 800
 FPS = 60
 PLAYER_VEL = 5
 Player = Game.Classes.player.Player
+Trophy = Game.Classes.object.Trophy
 Slime = Game.Classes.enemy.Slime
 Fire = Game.Classes.object.Fire
 Block = Game.Classes.object.Block
@@ -46,6 +47,7 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
     player.draw(window, offset_x)
     menu_items.draw(window)
+   
     i = 0
     x_heart = 0
     while i < player.health : 
@@ -63,7 +65,8 @@ def main(window):
     back_button_img = pygame.image.load("assets/Menu/Buttons/Back.png") 
     back_button = menu_button.GameButton(970,0, back_button_img, 2)
     heart_img = pygame.image.load('assets/Other/Heart.png')
-    heart_img = pygame.transform.scale(heart_img, (25, 25))
+    hearts = pygame.transform.scale(heart_img, (25, 25))
+    trophy = Trophy(3100, 450, 120, 120)
     
     
     
@@ -79,7 +82,7 @@ def main(window):
     second_layer_platform = [*create_platform(800, 6, 4, block_size, Block), *create_platform(1600, 6, 4, block_size, Block)]
     rising_level = [*create_platform(0, 2, 1, block_size, Block), *create_platform(-95, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
     platforms = [*floor, *first_layer_platform, *second_layer_platform, *rising_level]
-    objects = [*platforms, fire, fire_second, slime, slime2]
+    objects = [*platforms, fire, fire_second, slime, slime2, trophy]
     enemy_objects = [*rising_level]
 
     offset_x = 0
@@ -110,14 +113,15 @@ def main(window):
         fire.loop()
         fire_second.loop()
         handle_move(player, objects, True)
-        draw(window, background, bg_image, player, objects, offset_x, back_button, heart_img)
+        draw(window, background, bg_image, player, objects, offset_x, back_button, hearts)
         
      
         if player.rect.y > 800 :
-            game_over(window)
+            game_over(window, False)
         if player.health == 0:
-            game_over(window)
-        
+            game_over(window, False)
+        if handle_move(player, objects, True) == True:
+            game_over(window, True)
         
 
         if ((player.rect.right - offset_x >= WIDTH - scroll_area_width) and player.x_vel > 0) or (
@@ -127,36 +131,65 @@ def main(window):
     pygame.quit()
     quit()
 
-def game_over(window):
+def game_over(window, win):
     run = True
     while run:
-        window.fill("BLACK")
-        menu_text = get_font(55).render("GAME OVER", True, "#d7fcd4")
-        menu_rect = menu_text.get_rect(center=(500, 100))
-        menu_mouse_pos = pygame.mouse.get_pos()
-        
-        play_again_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 250), 
-                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
-                            text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 550), 
-                            text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        window.blit(menu_text, menu_rect)
-        
-        for button in [play_again_button, main_menu_button, quit_button]:
-            button.changeColor(menu_mouse_pos)
-            button.update(window)
-        for event in pygame.event.get():
-           if event.type == pygame.MOUSEBUTTONDOWN:
-                if play_again_button.checkForInput(menu_mouse_pos):
-                    main(window)
-                if main_menu_button.checkForInput(menu_mouse_pos):
-                    menu(window)
-                if quit_button.checkForInput(menu_mouse_pos):
-                    pygame.quit()
-                    sys.exit()
+        if(win == False):
+            window.fill("BLACK")
+            menu_text = get_font(55).render("GAME OVER", True, "#d7fcd4")
+            menu_rect = menu_text.get_rect(center=(500, 100))
+            menu_mouse_pos = pygame.mouse.get_pos()
+            
+            play_again_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 250), 
+                                text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+            main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
+                                text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+            quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 550), 
+                                text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+            window.blit(menu_text, menu_rect)
+            
+            for button in [play_again_button, main_menu_button, quit_button]:
+                button.changeColor(menu_mouse_pos)
+                button.update(window)
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if play_again_button.checkForInput(menu_mouse_pos):
+                        main(window)
+                    if main_menu_button.checkForInput(menu_mouse_pos):
+                        menu(window)
+                    if quit_button.checkForInput(menu_mouse_pos):
+                        pygame.quit()
+                        sys.exit()
 
-        pygame.display.update()    
+            pygame.display.update()
+        else:
+           window.fill("BLACK")
+           menu_text = get_font(55).render("YOU WIN!", True, "#d7fcd4")
+           menu_rect = menu_text.get_rect(center=(500, 100))
+           menu_mouse_pos = pygame.mouse.get_pos()
+
+           score_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 250), 
+                                text_input="SCORE", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+           main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
+                                text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+           quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 550), 
+                                text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+           window.blit(menu_text, menu_rect)
+            
+           for button in [score_button, main_menu_button, quit_button]:
+                button.changeColor(menu_mouse_pos)
+                button.update(window)
+           for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if score_button.checkForInput(menu_mouse_pos):
+                        print("SCORE")
+                    if main_menu_button.checkForInput(menu_mouse_pos):
+                        menu(window)
+                    if quit_button.checkForInput(menu_mouse_pos):
+                        pygame.quit()
+                        sys.exit()
+
+           pygame.display.update()      
 
 
 
