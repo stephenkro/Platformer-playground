@@ -28,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.hit = False
         self.hit_count = 0
         self.health = 3
+        self.score = 0
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8

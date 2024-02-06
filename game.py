@@ -63,7 +63,7 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
 
 def main(window):
-    SCORE=0
+    FINAL_SCORE=0
     clock = pygame.time.Clock()
     background, bg_image = get_background("Blue.png")
     block_size = 96
@@ -97,7 +97,7 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS)
-        score_text = get_font(20).render(f'Score:{SCORE}', True, "#d7fcd4")
+        score_text = get_font(20).render(f'Score:{player.score}', True, "#d7fcd4")
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 run = False
@@ -119,7 +119,7 @@ def main(window):
         fire.loop()
         fire_second.loop()
         
-        handle_move(player, objects, SCORE)
+        handle_move(player, objects)
         draw(window, background, bg_image, player, objects, offset_x, back_button, hearts, score_text)
         
      
@@ -127,10 +127,7 @@ def main(window):
             game_over(window, False)
         if player.health == 0:
             game_over(window, False)
-        # if handle_move(player, objects, SCORE) == 100:
-        #     print('SCORE SUPPOSE TO INCREASE')
-        #     SCORE += 100
-        if handle_move(player, objects, SCORE) == True:
+        if handle_move(player, objects) == True:
             game_over(window, True)
         
 
