@@ -7,8 +7,11 @@ from os.path import isfile, join
 
 
 
+
+
 WIDTH, HEIGHT = 1000, 800
 window = pygame.display.set_mode((WIDTH, HEIGHT))
+
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
@@ -62,3 +65,12 @@ def get_background(name):
             tiles.append(pos)
 
     return tiles, image
+
+def create_platform(x, y, num, block_size, Block):
+    return [Block(block_size * i+x, HEIGHT - block_size * y, block_size) for i in range(num)]
+
+def create_fruit(x, y, num, Fruit, width, height, type):
+    return [Fruit(x + i * 100, y, width, height, type) for i in range(num)]
+
+def create_fire(x, y, num, block_size, Fire):
+    return [Fire(x + i * block_size * 2, HEIGHT - block_size - y, 16, 32) for i in range(num)]
