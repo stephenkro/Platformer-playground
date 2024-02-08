@@ -30,6 +30,8 @@ handle_move = Game.Functions.physics.handle_move
 menu_background = pygame.image.load("assets/Background/Sky.png")
 menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 create_platform = Game.Functions.load.create_platform
+create_fruit = Game.Functions.load.create_fruit
+create_fire = Game.Functions.load.create_fire
 
 
 
@@ -72,23 +74,26 @@ def main(window):
     heart_img = pygame.image.load('assets/Other/Heart.png')
     hearts = pygame.transform.scale(heart_img, (25, 25))
     trophy = Trophy(3100, 450, 120, 120)
-    fruit = Fruit(320, 370, 30, 30, 'Melon')
-    items = [Fruit(320 + i * 100, 370, 30, 30, 'Melon') for i in range(4)]
     
     
     player = Player(0, 100, 50, 50)
-    slime = Slime(150, 645, 44, 30)
-    slime2 = Slime(300, 645, 44, 30)
-    fire = Fire(150, HEIGHT - block_size - 64, 16, 32)
-    fire_second = Fire(-150, HEIGHT - block_size - 64, 16, 32)
-    fire.on()
-    fire_second.on()
+    slime = [Slime(150, 645, 44, 30), Slime(500, 645, 44, 30)]
+    first_layer_items = [*create_fruit(320, 370, 4, Fruit, 30, 30, 'Melon'), *create_fruit(-600, 370, 4, Fruit, 30, 30, 'Bananas'), *create_fruit(1200, 370, 2, Fruit, 30, 30, 'Kiwi')]
+    items = [*first_layer_items]
+    floor_fire = [*create_fire(150, 64, 6, block_size, Fire)]
+    for fire in floor_fire:
+        fire.on()
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH * 3 // block_size, (WIDTH * 3) // block_size)]
-    first_layer_platform = [*create_platform(300, 4, 4, block_size, Block), *create_platform(-600, 4, 4, block_size, Block), *create_platform(1200, 4, 2, block_size, Block), *create_platform(2000, 4, 4, block_size, Block)]
+    first_layer_platform = [*create_platform(300, 4, 4, block_size, Block), 
+                            *create_platform(-600, 4, 4, block_size, Block),
+                            *create_platform(-1200, 4, 4, block_size, Block), 
+                            *create_platform(1200, 4, 2, block_size, Block), 
+                            *create_platform(2000, 4, 4, block_size, Block)]
     second_layer_platform = [*create_platform(800, 6, 4, block_size, Block), *create_platform(1600, 6, 4, block_size, Block)]
     rising_level = [*create_platform(0, 2, 1, block_size, Block), *create_platform(-95, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
     platforms = [*floor, *first_layer_platform, *second_layer_platform, *rising_level]
-    objects = [*platforms, fire, fire_second, slime, slime2, trophy, *items]
+    
+    objects = [*platforms, *floor_fire, *slime, trophy, *items]
     enemy_objects = [*rising_level]
 
     offset_x = 0
@@ -114,21 +119,23 @@ def main(window):
                     menu(window)
 
         player.loop(FPS)
-        slime.loop(enemy_objects)
-        slime2.loop(enemy_objects)
-        fire.loop()
-        fire_second.loop()
+        for enemy in slime:
+            enemy.loop(enemy_objects)
+        # slime.loop(enemy_objects)
+        # slime2.loop(enemy_objects)
+        for fire in floor_fire:
+            fire.loop()
         
         handle_move(player, objects)
         draw(window, background, bg_image, player, objects, offset_x, back_button, hearts, score_text)
-        
+        FINAL_SCORE = player.score
      
         if player.rect.y > 800 :
-            game_over(window, False)
+            game_over(window, False, FINAL_SCORE)
         if player.health == 0:
-            game_over(window, False)
+            game_over(window, False, FINAL_SCORE)
         if handle_move(player, objects) == True:
-            game_over(window, True)
+            game_over(window, True, FINAL_SCORE)
         
 
         if ((player.rect.right - offset_x >= WIDTH - scroll_area_width) and player.x_vel > 0) or (
@@ -138,7 +145,7 @@ def main(window):
     pygame.quit()
     quit()
 
-def game_over(window, win):
+def game_over(window, win, score):
     run = True
     while run:
         if(win == False):
@@ -146,14 +153,18 @@ def game_over(window, win):
             menu_text = get_font(55).render("GAME OVER", True, "#d7fcd4")
             menu_rect = menu_text.get_rect(center=(500, 100))
             menu_mouse_pos = pygame.mouse.get_pos()
+            score_text = get_font(50).render(f'FINAL SCORE: {score}', True, "#d7fcd4")
+            score_rect = score_text.get_rect(center=(500, 200))
             
-            play_again_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 250), 
+            
+            play_again_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 350), 
                                 text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-            main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
+            main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 500), 
                                 text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-            quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 550), 
+            quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 650), 
                                 text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
             window.blit(menu_text, menu_rect)
+            window.blit(score_text, score_rect)
             
             for button in [play_again_button, main_menu_button, quit_button]:
                 button.changeColor(menu_mouse_pos)
@@ -174,22 +185,23 @@ def game_over(window, win):
            menu_text = get_font(55).render("YOU WIN!", True, "#d7fcd4")
            menu_rect = menu_text.get_rect(center=(500, 100))
            menu_mouse_pos = pygame.mouse.get_pos()
-
-           score_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Options Rect.png"), pos=(500, 250), 
-                                text_input="SCORE", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+           score_text = get_font(50).render(f'FINAL SCORE: {score}', True, "#d7fcd4")
+           score_rect = score_text.get_rect(center=(500, 250))
+           
            main_menu_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Play Rect.png"), pos=(500, 400), 
                                 text_input="MENU", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
            quit_button = TextButton(image=pygame.image.load("assets/Menu/Buttons/Quit Rect.png"), pos=(500, 550), 
                                 text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
            window.blit(menu_text, menu_rect)
+           window.blit(score_text, score_rect)
             
-           for button in [score_button, main_menu_button, quit_button]:
+           for button in [main_menu_button, quit_button]:
                 button.changeColor(menu_mouse_pos)
                 button.update(window)
            for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if score_button.checkForInput(menu_mouse_pos):
-                        print("SCORE")
+                    # if score_button.checkForInput(menu_mouse_pos):
+                    #     print("SCORE")
                     if main_menu_button.checkForInput(menu_mouse_pos):
                         menu(window)
                     if quit_button.checkForInput(menu_mouse_pos):

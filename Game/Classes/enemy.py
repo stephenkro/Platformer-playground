@@ -73,7 +73,7 @@ class Slime(Enemy):
             if pygame.sprite.collide_mask(self, obj):
                  collided_object = obj
                  break
-        
+        # self.update()
         return collided_object
 
     
@@ -84,10 +84,10 @@ class Slime(Enemy):
             self.pace_count = 0
             self.animation_count = 0
             
-        if collide and direction == 'right':
-            self.direction = 'left'
-            self.pace_count = 0
-            self.animation_count = 0
+        elif collide and direction == 'right':
+             self.direction = 'left'
+             self.pace_count = 0
+             self.animation_count = 0
 
         else:
             if direction == 'left':
