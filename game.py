@@ -77,20 +77,26 @@ def main(window):
     
     
     player = Player(0, 100, 50, 50)
-    slime = [Slime(150, 645, 44, 30), Slime(500, 645, 44, 30)]
-    first_layer_items = [*create_fruit(320, 370, 4, Fruit, 30, 30, 'Melon'), *create_fruit(-600, 370, 4, Fruit, 30, 30, 'Bananas'), *create_fruit(1200, 370, 2, Fruit, 30, 30, 'Kiwi')]
+    slime = [Slime(250, 645, 44, 30), Slime(500, 645, 44, 30)]
+    first_layer_items = [
+                         *create_fruit(320, 370, 4, Fruit, 30, 30, 'Melon'), 
+                         *create_fruit(-600, 370, 4, Fruit, 30, 30, 'Bananas'), 
+                         *create_fruit(1200, 370, 2, Fruit, 30, 30, 'Kiwi')
+                        ]
     items = [*first_layer_items]
-    floor_fire = [*create_fire(150, 64, 6, block_size, Fire)]
+    floor_fire = [*create_fire(200, 64, 6, block_size, Fire)]
     for fire in floor_fire:
         fire.on()
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH * 3 // block_size, (WIDTH * 3) // block_size)]
-    first_layer_platform = [*create_platform(300, 4, 4, block_size, Block), 
+    first_layer_platform = [
+                            *create_platform(300, 4, 4, block_size, Block), 
                             *create_platform(-600, 4, 4, block_size, Block),
                             *create_platform(-1200, 4, 4, block_size, Block), 
                             *create_platform(1200, 4, 2, block_size, Block), 
-                            *create_platform(2000, 4, 4, block_size, Block)]
+                            *create_platform(2000, 4, 4, block_size, Block)
+                            ]
     second_layer_platform = [*create_platform(800, 6, 4, block_size, Block), *create_platform(1600, 6, 4, block_size, Block)]
-    rising_level = [*create_platform(0, 2, 1, block_size, Block), *create_platform(-95, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
+    rising_level = [*create_platform(100, 2, 1, block_size, Block), *create_platform(-100, 2, 1, block_size, Block), *create_platform(1200, 2, 1, block_size, Block), *create_platform(3000, 3, 3, block_size, Block)]
     platforms = [*floor, *first_layer_platform, *second_layer_platform, *rising_level]
     
     objects = [*platforms, *floor_fire, *slime, trophy, *items]
@@ -119,10 +125,10 @@ def main(window):
                     menu(window)
 
         player.loop(FPS)
+        
         for enemy in slime:
             enemy.loop(enemy_objects)
-        # slime.loop(enemy_objects)
-        # slime2.loop(enemy_objects)
+        
         for fire in floor_fire:
             fire.loop()
         

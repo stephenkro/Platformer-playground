@@ -49,6 +49,8 @@ class Slime(Enemy):
         self.mask = pygame.mask.from_surface(self.image)
         self.pace_size = self.pace_size
         self.turn_after = self.turn_after
+        self.last = pygame.time.get_ticks()
+        self.cooldown = 500
         
 
    def loop(self, objects):
@@ -63,48 +65,57 @@ class Slime(Enemy):
         self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.image)
 
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
+        self.update()
    
    def enemy_collide(self, objects):
+    
         collided_object = None
-        # self.update()
         for obj in objects:
             if pygame.sprite.collide_mask(self, obj):
                  collided_object = obj
                  break
-        # self.update()
         return collided_object
 
     
    def movement(self, direction, objects):
+        now = pygame.time.get_ticks()
         collide = self.enemy_collide(objects)
+        
         if collide and direction == 'left':
-            self.direction = 'right'
-            self.pace_count = 0
-            self.animation_count = 0
+            if now - self.last >= self.cooldown:
+                self.direction = 'right'
+                self.move(-self.pace_size, 0)
+                self.last = now
+                self.pace_count = self.turn_after
+                self.animation_count = 0
+                self.update()
             
-        elif collide and direction == 'right':
-             self.direction = 'left'
-             self.pace_count = 0
-             self.animation_count = 0
-
-        else:
-            if direction == 'left':
+            
+        if collide and direction == 'right':
+            if now - self.last >= self.cooldown:
+                self.direction = 'left'
+                self.last = now
+                self.move(self.pace_size, 0)
+                self.pace_count = self.turn_after
+                self.animation_count = 0
+                self.update()
+        
+        if direction == 'left':
                 self.pace_count += 1
                 self.rect.x += self.pace_size
-                if(self.pace_count >= self.turn_after):
+                if self.pace_count >= self.turn_after:
                     self.direction = 'right'
                     self.pace_count = 0
                     self.animation_count = 0
-
-            if direction == 'right':
+                    self.update()
+        elif direction == 'right':
                 self.pace_count += 1
                 self.rect.x -= self.pace_size
-                if(self.pace_count >= self.turn_after):
+                if self.pace_count >= self.turn_after:
                     self.direction = 'left'
                     self.pace_count = 0
                     self.animation_count = 0
+                    self.update()
     
    
    def update(self):
