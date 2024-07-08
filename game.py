@@ -11,6 +11,7 @@ import Game.Functions.load
 import Game.Functions.physics
 from Menu.menu_button import TextButton
 import Game.Classes.enemy
+from Menu.options import options
 
 pygame.init()
 
@@ -37,7 +38,7 @@ create_fire = Game.Functions.load.create_fire
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 menu_button = Game.game_button
-pygame.display.set_caption("Cute Platformer")
+pygame.display.set_caption("PySandPlat")
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
@@ -123,6 +124,7 @@ def main(window):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.draw(window) == True:
                     menu(window)
+                    pygame.quit()
 
         player.loop(FPS)
         
@@ -225,7 +227,7 @@ def menu(window):
      
 
         menu_mouse_pos = pygame.mouse.get_pos()
-        menu_text = get_font(55).render("CUTE PLATFORMER", True, "#d7fcd4")
+        menu_text = get_font(55).render("PYSANDPLAT", True, "#d7fcd4")
         menu_rect = menu_text.get_rect(center=(500, 100))
 
         window.blit(menu_text, menu_rect)
@@ -246,7 +248,7 @@ def menu(window):
                 if play_button.checkForInput(menu_mouse_pos):
                     main(window)
                 if options_button.checkForInput(menu_mouse_pos):
-                    print('OPTIONS')
+                    options(window, menu, menu_background)
                 if quit_button.checkForInput(menu_mouse_pos):
                     pygame.quit()
                     sys.exit()
