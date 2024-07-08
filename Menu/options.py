@@ -12,7 +12,7 @@ pygame.display.set_caption("PySandPlat")
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
 
-def options(window, menu, menu_background):
+def options(window, menu, menu_background, character_choice):
     run = True
     while run:
         window.blit(menu_background, (0,0))
@@ -38,7 +38,7 @@ def options(window, menu, menu_background):
         for event in pygame.event.get():
            if event.type == pygame.MOUSEBUTTONDOWN:
                 if character_button.checkForInput(menu_mouse_pos):
-                    character(window, menu, menu_background)
+                    character(window, menu, menu_background, character_choice)
                 if how_to_play_button.checkForInput(menu_mouse_pos):
                     controls(window, menu, menu_background)
                 if back_button.checkForInput(menu_mouse_pos):

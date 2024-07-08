@@ -1,6 +1,6 @@
 import pygame, sys
 from Menu.menu_button import TextButton
-
+import config
 
 pygame.display.set_caption("PySandPlat")
 
@@ -10,7 +10,7 @@ pygame.display.set_caption("PySandPlat")
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
 
-def character(window, menu, menu_background):
+def character(window, menu, menu_background, character_choice):
     run = True
     while run:
         window.blit(menu_background, (0,0))
@@ -40,15 +40,20 @@ def character(window, menu, menu_background):
         for event in pygame.event.get():
            if event.type == pygame.MOUSEBUTTONDOWN:
                 if mask_button.checkForInput(menu_mouse_pos):
-                    print('MASK DUDE')
+                    config.character_choice = "MaskDude"
+                    menu(window)
                 if ninja_button.checkForInput(menu_mouse_pos):
-                    print('NINJA FROG')
+                    config.character_choice = "NinjaFrog"
+                    menu(window)
                 if pink_button.checkForInput(menu_mouse_pos):
-                    print('PINK MAAN')
+                    config.character_choice = "PinkMan"
+                    menu(window)
                 if virtual_button.checkForInput(menu_mouse_pos):
-                    print('VIRTUAL GUY')
+                    config.character_choice = "VirtualGuy"
+                    menu(window)
                 if back_button.checkForInput(menu_mouse_pos):
                     menu(window)
+                    print(config.character_choice)
                     pygame.quit()
                     
 

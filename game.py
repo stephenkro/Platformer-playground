@@ -12,7 +12,7 @@ import Game.Functions.physics
 from Menu.menu_button import TextButton
 import Game.Classes.enemy
 from Menu.options import options
-
+import config
 pygame.init()
 
 
@@ -33,6 +33,7 @@ menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 create_platform = Game.Functions.load.create_platform
 create_fruit = Game.Functions.load.create_fruit
 create_fire = Game.Functions.load.create_fire
+
 
 
 
@@ -67,6 +68,7 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
 def main(window):
     FINAL_SCORE=0
+    character_choice = config.character_choice
     clock = pygame.time.Clock()
     background, bg_image = get_background("Blue.png")
     block_size = 96
@@ -77,7 +79,7 @@ def main(window):
     trophy = Trophy(3100, 450, 120, 120)
     
     
-    player = Player(0, 100, 50, 50)
+    player = Player(0, 100, 50, 50, character_choice)
     slime = [Slime(250, 645, 44, 30), Slime(500, 645, 44, 30)]
     first_layer_items = [
                          *create_fruit(320, 370, 4, Fruit, 30, 30, 'Melon'), 
@@ -221,6 +223,7 @@ def game_over(window, win, score):
 
 
 def menu(window):
+    character_choice = config.character_choice
     run = True
     while run:
         window.blit(menu_background, (0,0))
@@ -246,9 +249,10 @@ def menu(window):
         for event in pygame.event.get():
            if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.checkForInput(menu_mouse_pos):
+                    print(character_choice, 'MAIN MENU CHOICE')
                     main(window)
                 if options_button.checkForInput(menu_mouse_pos):
-                    options(window, menu, menu_background)
+                    options(window, menu, menu_background, character_choice)
                 if quit_button.checkForInput(menu_mouse_pos):
                     pygame.quit()
                     sys.exit()

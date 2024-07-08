@@ -74,3 +74,5 @@ def create_fruit(x, y, num, Fruit, width, height, type):
 
 def create_fire(x, y, num, block_size, Fire):
     return [Fire(x + i * block_size * 2, HEIGHT - block_size - y, 16, 32) for i in range(num)]
+
+

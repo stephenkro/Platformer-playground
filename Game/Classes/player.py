@@ -12,10 +12,10 @@ load_sprite_sheets = Game.Functions.load.load_sprite_sheets
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "MaskDude", 32, 32, True)
+    # SPRITES = load_sprite_sheets("MainCharacters", 'NinjaFrog', 32, 32, True)
     ANIMATION_DELAY = 3
 
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, character_choice):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
@@ -29,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.hit_count = 0
         self.health = 3
         self.score = 0
+        self.SPRITES = load_sprite_sheets("MainCharacters", character_choice, 32, 32, True)
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
