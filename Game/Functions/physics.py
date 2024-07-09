@@ -5,6 +5,8 @@ import pygame, sys
 from os import listdir
 from os.path import isfile, join
 
+pygame.mixer.init()
+fruit_collect_sound = pygame.mixer.Sound('assets/Sound/Fruit collect 1.wav')
 
 PLAYER_VEL = 5
 
@@ -64,6 +66,7 @@ def handle_move(player, objects):
             return True
         if obj and obj.name == "fruit":
             player.score += 100
+            fruit_collect_sound.play()
             objects.remove(obj)
             break
             

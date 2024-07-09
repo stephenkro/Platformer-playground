@@ -8,6 +8,9 @@ import Game.Functions.load
 
 
 load_sprite_sheets = Game.Functions.load.load_sprite_sheets
+pygame.mixer.init()
+jump_sound = pygame.mixer.Sound("assets/Sound/Jump 1.wav")
+hit_sound = pygame.mixer.Sound("assets/Sound/Hit damage 1.wav")
 
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
@@ -35,8 +38,10 @@ class Player(pygame.sprite.Sprite):
         self.y_vel = -self.GRAVITY * 8
         self.animation_count = 0
         self.jump_count += 1
+        jump_sound.play()
         if self.jump_count == 1:
             self.fall_count = 0
+        
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -44,6 +49,7 @@ class Player(pygame.sprite.Sprite):
 
     def make_hit(self):
         self.hit = True
+        hit_sound.play()
 
     def move_left(self, vel):
         self.x_vel = -vel

@@ -40,11 +40,14 @@ create_fire = Game.Functions.load.create_fire
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 menu_button = Game.game_button
 pygame.display.set_caption("PySandPlat")
+pygame.mixer.init()
+
+
 
 def get_font(size):
     return pygame.font.Font("assets/font.ttf", size)
     
-def draw(window, background, bg_image, player, objects, offset_x, menu_items, heart, score_text):
+def draw(window, background, bg_image, player, objects, offset_x, back_button, sound_button, heart, score_text):
     for tile in background:
         window.blit(bg_image, tile)
 
@@ -52,7 +55,8 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
         obj.draw(window, offset_x)
 
     player.draw(window, offset_x)
-    menu_items.draw(window)
+    back_button.draw(window)
+    sound_button.draw(window)
     window.blit(score_text, (125, 5))
    
     i = 0
@@ -68,16 +72,20 @@ def draw(window, background, bg_image, player, objects, offset_x, menu_items, he
 
 def main(window):
     FINAL_SCORE=0
+    sound_status = True
     character_choice = config.character_choice
     clock = pygame.time.Clock()
     background, bg_image = get_background("Blue.png")
+    bgm_music = pygame.mixer.music.load('assets/Sound/Retrocadia.mp3')
+    pygame.mixer.music.play(-1)
     block_size = 96
     back_button_img = pygame.image.load("assets/Menu/Buttons/Back.png") 
     back_button = menu_button.GameButton(970,0, back_button_img, 2)
+    sound_button_img = pygame.image.load("assets/Menu/Buttons/Volume.png") 
+    sound_button = menu_button.GameButton(920,0, sound_button_img, 1.5)
     heart_img = pygame.image.load('assets/Other/Heart.png')
     hearts = pygame.transform.scale(heart_img, (25, 25))
     trophy = Trophy(3100, 450, 120, 120)
-    
     
     player = Player(0, 100, 50, 50, character_choice)
     slime = [Slime(250, 645, 44, 30), Slime(500, 645, 44, 30)]
@@ -107,10 +115,11 @@ def main(window):
 
     offset_x = 0
     scroll_area_width = 200
-
+    
     run = True
     while run:
         clock.tick(FPS)
+    
         score_text = get_font(20).render(f'Score:{player.score}', True, "#d7fcd4")
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
@@ -127,6 +136,15 @@ def main(window):
                 if back_button.draw(window) == True:
                     menu(window)
                     pygame.quit()
+                if sound_button.draw(window) == True:
+                    
+                    if sound_status == True:
+                        pygame.mixer.music.pause()
+                        sound_status = False
+                    elif sound_status == False:
+                        pygame.mixer.music.unpause()
+                        sound_status= True
+                 
 
         player.loop(FPS)
         
@@ -137,7 +155,7 @@ def main(window):
             fire.loop()
         
         handle_move(player, objects)
-        draw(window, background, bg_image, player, objects, offset_x, back_button, hearts, score_text)
+        draw(window, background, bg_image, player, objects, offset_x, back_button, sound_button, hearts, score_text)
         FINAL_SCORE = player.score
      
         if player.rect.y > 800 :
@@ -249,7 +267,6 @@ def menu(window):
         for event in pygame.event.get():
            if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.checkForInput(menu_mouse_pos):
-                    print(character_choice, 'MAIN MENU CHOICE')
                     main(window)
                 if options_button.checkForInput(menu_mouse_pos):
                     options(window, menu, menu_background, character_choice)
